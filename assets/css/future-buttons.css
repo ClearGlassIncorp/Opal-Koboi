@@ -142,3 +142,51 @@
   .future-glass:focus-visible { outline: 3px solid Highlight !important; }
   .future-glass::before, .future-glass::after { display: none; }
 }
+
+/* Shared static-page repairs: preserve the existing palette and optical layer. */
+:root {
+  --cg-glass-solid: #09182b;
+  --cg-focus-ring: #9bf6ff;
+  --cg-edge: rgba(151, 246, 255, .48);
+}
+/* Allow grid/flex children to shrink rather than hiding narrow-screen content. */
+.cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); }
+.console, .hero > *, .cards > *, .step > * { min-width: 0; }
+.consoleHead { gap: .75rem; flex-wrap: wrap; }
+.consoleHead > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.lights { flex-shrink: 0; }
+.ctaRow .btn { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
+.card, .node, .pill, .nextBridge { overflow-wrap: anywhere; }
+/* Native links retain a keyboard ring even before JavaScript enhances them. */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--cg-focus-ring);
+  outline-offset: 3px;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .future-glass { background: var(--cg-glass-solid); }
+}
+/* Unsupported composite masks must not paint a solid gradient over the label. */
+@supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+  .future-glass::before { display: none; }
+  .future-glass { border-color: var(--cg-edge) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  .future-glass, .future-glass:hover, .future-glass:active,
+  .future-glass.is-future-pressed, .future-glass::before, .future-glass::after,
+  .future-glass svg, .future-glass [class*="icon"], .future-glass [aria-hidden="true"] {
+    animation: none !important;
+    transition: none !important;
+    translate: none !important;
+    transform: none !important;
+  }
+  .future-glass::after { display: none; }
+  .card, .btn-primary, .btn-ghost, .journey-step {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+@media (forced-colors: active) {
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: Highlight; }
+  .grid, .bg-grid, #starfield { display: none; }
+}
